@@ -14,10 +14,15 @@
     do(equal x (state-pos st))))
 
 (defun nextState (st act)
-  "generate the nextState after state st and action act"
-  (make-STATE :POS '(3 16)
-	      :VEL '(1 3)
+	(let ((POSx (+ (car state-pos st) (car state-vel st)))
+		(POSy (+ (car (cdr state-pos st)) (car (cdr state-vel st))))
+		(pos '(list POSx POSy))
+		(VELx (+ (car state-vel st) (car act)))
+		(VELy (+ (car (cdr state-vel st)) (car (cdr act))))
+		(vel '(list VELx VELy)))
+  	(make-STATE :POS pos
+	      :VEL vel
 	      :ACTION act
-	      :COST -100))
+	      :COST -100)))
 
-
+	
