@@ -16,10 +16,10 @@
 (defun nextState (st act)
 	(let ((POSx (+ (car (state-pos st)) (car (state-vel st))))
 		(POSy (+ (car (cdr (state-pos st))) (car (cdr (state-vel st)))))
-		(pos '(list POSx POSy))
+		(pos (list POSx POSy))
 		(VELx (+ (car (state-vel st)) (car act)))
 		(VELy (+ (car ((cdr state-vel st))) (car (cdr act))))
-		(vel '(list VELx VELy)))
+		(vel (list VELx VELy)))
   	(make-STATE :POS pos
 	      :VEL vel
 	      :ACTION act
