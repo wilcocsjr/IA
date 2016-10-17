@@ -9,9 +9,11 @@
    (nth (cdr pos) 
         (nth (car pos) (state-track-env track)))))
 
-(defun isGoalp (st) 
-  (loop for x in (state-track-endpositions st)
-    do(equal x (state-pos st))))
+(defun isGoalp (st)
+  (let ((posfinal 0))
+   (loop for x in (state-track-endpositions st)
+        do(if (equal x (state-pos st)) (setf posfinal 1)))
+   (if (equal posfinal 1) t)))
 
 (defun nextState (st act)
 	(let ((POSx (+ (car state-pos st) (car state-vel st)))
