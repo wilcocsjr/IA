@@ -23,9 +23,9 @@
 		:VEL velocity
 		:ACTION act 
 		:COST (cond
-				((checkPositionGoal st position) (- (state-cost st) 100))
-				((isObstaclep position (state-track st)) (+ (state-cost st) 20))
-				(t (+ (state-cost st) 1))
+				((checkPositionGoal st position) -100)
+				((isObstaclep position (state-track st)) 20)
+				(t 1)
 				))))
 
 
