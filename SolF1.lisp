@@ -5,13 +5,12 @@
 (load "auxfuncs.lisp")
 
 (defun isObstaclep (pos track) 
-  (not 
-   (nth (cdr pos) 
-        (nth (car pos) (state-track-env track)))))
+   (not (nth (car (reverse pos)) 
+        (nth (car pos) (track-env track)))))
 
 (defun isGoalp (st)
   (let ((posfinal 0))
-   (loop for x in (state-track-endpositions st)
+   (loop for x in (track-endpositions (state-track st))
         do(if (equal x (state-pos st)) (setf posfinal 1)))
    (if (equal posfinal 1) t)))
 
