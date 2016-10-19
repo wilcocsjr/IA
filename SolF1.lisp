@@ -1,8 +1,10 @@
+;;; 79664 Joao Pedro Martins Serras, 79714 Daniel Caramujo, Grupo 63
 
-;;; These functions, and any other ones needed must be implemented
+;;;(load "datastructures.lisp")
+;;;(load "auxfuncs.lisp")
 
-(load "datastructures.lisp")
-(load "auxfuncs.lisp")
+(load "datastructures.fas")
+(load "auxfuncs.fas")
 
 (defun isObstaclep (pos track) 
    (not (nth (car (reverse pos)) 
