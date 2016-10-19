@@ -28,7 +28,9 @@
 				((checkPositionGoal st position) -100)
 				((isObstaclep position (state-track st)) 20)
 				(t 1)
-				))))
+				)
+		:TRACK (state-track st)
+		:OTHER (state-other st))))
 
 
 (defun checkPositionGoal (st position)
