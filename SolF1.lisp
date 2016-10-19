@@ -14,16 +14,14 @@
         do(if (equal x (state-pos st)) (setf posfinal 1)))
    (if (equal posfinal 1) t)))
 
-(defun nextState (st act)
-	(let ((POSx (+ (car state-pos st) (car state-vel st)))
-		(POSy (+ (car (cdr state-pos st)) (car (cdr state-vel st))))
-		(pos '(list POSx POSy))
-		(VELx (+ (car state-vel st) (car act)))
-		(VELy (+ (car (cdr state-vel st)) (car (cdr act))))
-		(vel '(list VELx VELy)))
-  	(make-STATE :POS pos
-	      :VEL vel
-	      :ACTION act
-	      :COST -100)))
 
-	
+(defun nextState (st act)
+	(make-STATE 
+		:POS (list (+ (car (state-pos st)) (car (state-vel st))) (+ (car (cdr (state-pos st))) (car (cdr (state-vel st))))) 
+		:VEL (list (+ (car (state-vel st)) (car act)) (+ (car (cdr (state-vel st))) (car (cdr act)))) 
+		:ACTION act 
+		:COST -100))
+
+
+
+
