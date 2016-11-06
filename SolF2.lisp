@@ -74,8 +74,10 @@
 
 ;;; Pedir 
 (defun nextStates (st)
-  "generate all possible next states"
-	(list st))
+	(let ((ret '()))
+		(loop for el in (getPossibleActions)
+			do(push (nextState st el) ret))
+	ret))
 
 ;;; limdepthfirstsearch 
 (defun limdepthfirstsearch (problem lim &key cutoff?)
@@ -94,3 +96,6 @@
      lim - limit of depth iterations"
 	(list (make-node :state (problem-initial-state problem))) )
 
+
+(defun getPossibleActions()
+	(list '(0 0) '(0 1) '(1 0) '(-1 0) '(0 -1) '(1 -1) '(-1 1) '(1 1) '(-1 -1)))
