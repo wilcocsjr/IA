@@ -75,7 +75,7 @@
 ;;; Pedir 
 (defun nextStates (st)
 	(let ((ret '()))
-		(loop for el in (getPossibleActions)
+		(loop for el in (possible-actions)
 			do(push (nextState st el) ret))
 	ret))
 
@@ -95,7 +95,3 @@
      problem - problem information
      lim - limit of depth iterations"
 	(list (make-node :state (problem-initial-state problem))) )
-
-
-(defun getPossibleActions()
-	(list '(0 0) '(0 1) '(1 0) '(-1 0) '(0 -1) '(1 -1) '(-1 1) '(1 1) '(-1 -1)))
