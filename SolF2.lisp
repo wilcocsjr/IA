@@ -80,18 +80,121 @@
 	ret))
 
 ;;; limdepthfirstsearch 
-(defun limdepthfirstsearch (problem lim &key cutoff?)
-  "limited depth first search
-     st - initial state
-     problem - problem information
-     lim - depth limit"
-	(list (make-node :state (problem-initial-state problem))) )
-				      
+(defun limdepthfirstsearch (problem lim )
+	"(list (make-node :state (problem-initial-state problem)))"
+		(funcall stateToNode nil (problem-initial-state problem))
+		(limdepthfirstsearch_aux (problem-initial-state problem) problem lim))
+		;;(print x))
+		
+(defun limdepthfirstsearch_aux (state problem limite)
+	(if (funcall (problem-fn-isGoal problem) state) (return-from limdepthfirstsearch_aux  (state)))
+		(if (zerop lim) (return-from limdepthfirstsearch_aux nil)
+			(lambda()
+					(loop for x in (funcall (problem-fn-nextstates problem) state)
+						do((lambda()
+							(funcall stateToNode x state)
+							(let ((ret limdepthfirstsearch_aux x problem (- lim 1))))
+							(if (funcall (problem-fn-isGoal problem) ret) (return-from limdepthfirstsearch_aux ret))
+						))
+					)
+				
+			)
+	)
+)
 
+	
+(defun stateToNode (state parent)
+	(make-NODE 
+ 		parent: parent
+	  	state: state
+	  	f: nil
+	  	g: nil
+	  	h: nil))
+	
+	
+	
+	
+	
+	
+	
+	;(let ((retorno ':corte) (actual-state ()))
+	;	(if (eq lim 0) (return-from limdepthfirstsearch_aux retorno))
+	;		(setq actual-state (problem-initial-state problem))
+	;	(setf sucessores (funcall (problem-fn-nextstates problem) actual-state))
+	;		(setq retorno nil)
+	;		(loop 
+	;			(if (null sucessores)
+	;				(return-from limdepthfirstsearch_aux retorno)
+	;				(lambda()
+	;					(setq actual-state (car sucessores))
+	;					(if (funcall problem-isGoal problem) actual-state)
+	;						(return-from limdepthfirstsearch_aux  actual-state)
+	;						(lambda()
+	;							(if (eql lim (list-length estado-actual))
+	;								(lambda() (setf sucessores (rest sucessores))
+	;									     (setq retorno ':corte))
+	;								(setf sucessores (append (funcall (problem-fn-nextstates problem) actual_state) (cdr sucessores)))
+	;							)
+	;						)
+	;					)
+	;				)	
+	;			)
+	;		)
+	;	)
+		
+	
+		
+		
+		
+;;;(defun limdepthfirstsearch_aux (problem lim)
+	;;;		(cond 	((< lim 0) nil)
+		;;;			((isGoalp problem) problem)
+			;;;		((and (> lim 0) (not(isGoalp problem)))
+				;;;		(lambda()
+					;;;		(print "entrei")
+						;;;	(let ((lista (nextStates problem))))
+							;;;(if (equal (list-length lista) 0) nil)
+							;;;(loop for x in lista
+								;;;do((lambda()
+									;;;(let ((var (limdepthfirstsearch_aux x (- lim 1)))))
+									;;;(if (or (isGoalp var) (isGoalp (nth (list-length var) var))) 
+										;;;(if (listp var) (push problem var) '(problem var)) )
+			;;;					))
+		;;;					)
+							
+		;;;				)
+		;;;			)
+		;;;	)
+		;;;	nil
+		;;;	)
+		
+		
+;;;(defun limdepthfirstsearch_aux (problem lim)
+;;;	(let ((ret '()) (lista (nextStates problem)))
+	;;;(print "==================================================")
+	;;;(print "lim:")
+	;;;(print lim)
+	;;;(print problem)
+	;;;(print "==================================================")
+	;;;(print "-----------------------------------------------------")
+	;;;(print lista)
+	;;;(print "-----------------------------------------------------")
+	;;;(if (> lim 0)
+	;;;(loop for x in lista
+		;;;do( (lambda()
+			;;;(print x)
+			;;;(cond ((equal (state-cost x) -100) (print "Encontrei"))
+				;;;	((not(equal ret nil))(if (equal (state-cost (nth 0 ret)) -100) ret))
+					;;;((not(equal (state-cost x) 20)) ((lambda()
+							;;;(if (not(equal x (nth 0 ret))) (remove (nth 0 ret) ret))
+						;;;	(push x ret)
+							;;;(limdepthfirstsearch_aux x (- lim 1))))))
+;;;			))))	
+	;;;ret
+	;;;))
+
+	;;;push (limdepthfirstsearch_aux x (- lim 1)) ret
+	
 ;iterlimdepthfirstsearch
 (defun iterlimdepthfirstsearch (problem &key (lim most-positive-fixnum))
-  "limited depth first search
-     st - initial state
-     problem - problem information
-     lim - limit of depth iterations"
 	(list (make-node :state (problem-initial-state problem))) )
