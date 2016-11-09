@@ -97,6 +97,7 @@
 			(cond ((eq ret nil)())
 				((isGoalp ret) (return-from limdepthfirstsearch_aux '(x ret)))
 				((isGoal (car last ret)) (return-from limdepthfirstsearch_aux (push x ret)))
+			)
 	)	
 )
 
