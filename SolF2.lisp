@@ -79,37 +79,35 @@
 			do(push (nextState st el) ret))
 	ret))
 
+
+
 ;;; limdepthfirstsearch 
-(defun limdepthfirstsearch (problem lim )
-	"(list (make-node :state (problem-initial-state problem)))"
-		(funcall stateToNode nil (problem-initial-state problem))
-		(limdepthfirstsearch_aux (problem-initial-state problem) problem lim))
+(defun limdepthfirstsearch (problem lim)
+	;"(list (make-node :state (problem-initial-state problem)))"
+		;(stateToNode nil (problem-initial-state problem))
+		(print (limdepthfirstsearch_aux (problem-initial-state problem) problem lim)))
 		;;(print x))
 		
 (defun limdepthfirstsearch_aux (state problem limite)
-	(if (funcall (problem-fn-isGoal problem) state) (return-from limdepthfirstsearch_aux  (state)))
-		(if (zerop lim) (return-from limdepthfirstsearch_aux nil)
-			(lambda()
-					(loop for x in (funcall (problem-fn-nextstates problem) state)
-						do((lambda()
-							(funcall stateToNode x state)
-							(let ((ret limdepthfirstsearch_aux x problem (- lim 1))))
-							(if (funcall (problem-fn-isGoal problem) ret) (return-from limdepthfirstsearch_aux ret))
-						))
-					)
-				
-			)
-	)
+	(print limite)
+	(if (isGoalp state) (return-from limdepthfirstsearch_aux  state))
+	(if (zerop limite) (return-from limdepthfirstsearch_aux nil))
+	(loop for x in (nextStates state) do
+			(setf ret (limdepthfirstsearch_aux x problem (- limite 1)))
+			(cond ((eq ret nil)())
+				((isGoalp ret) (return-from limdepthfirstsearch_aux '(x ret)))
+				((isGoal (car last ret)) (return-from limdepthfirstsearch_aux (push x ret)))
+	)	
 )
 
 	
-(defun stateToNode (state parent)
+(defun stateToNode (parentState CurrentState)
 	(make-NODE 
- 		parent: parent
-	  	state: state
-	  	f: nil
-	  	g: nil
-	  	h: nil))
+ 		:PARENT parentState
+	  	:STATE CurrentState
+	  	:F nil
+	  	:G nil
+	  	:H nil))
 	
 	
 	
