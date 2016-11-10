@@ -1,6 +1,8 @@
-(load "datastructures.lisp")
-(load "auxfuncs.lisp")
+;(load "datastructures.lisp")
+;(load "auxfuncs.lisp")
 
+(load "datastructures.fas")
+(load "auxfuncs.fas")
 
 ;;; TAI position
 (defun make-pos (c l)
@@ -84,22 +86,52 @@
 ;;; limdepthfirstsearch 
 (defun limdepthfirstsearch (problem lim)
 	;"(list (make-node :state (problem-initial-state problem)))"
-;(stateToNode nil (problem-initial-state problem))
-		(print (list (limdepthfirstsearch_aux (problem-initial-state problem) problem lim))))
+		;(print (stateToNode nil (problem-initial-state problem))))
+		;(print (list (limdepthfirstsearch_aux (problem-initial-state problem) problem lim))))
+		(creatList (limdepthfirstsearch_aux (stateToNode nil (problem-initial-state problem)) problem lim)))
 		;;(print x))
 		
-(defun limdepthfirstsearch_aux (state problem limite)
-	(if (funcall (problem-fn-isGoal problem) state) (return-from limdepthfirstsearch_aux  state))
- 	(if (zerop limite) (return-from limdepthfirstsearch_aux nil))
- 	(loop for x in (funcall (problem-fn-nextstates problem) state)
+		
+(defun limdepthfirstsearch_aux (state problem limite )
+	(let ((ret nil)(no nil))
+	(if (funcall (problem-fn-isGoal problem) (node-state state)) (return-from limdepthfirstsearch_aux  state))
+	(if (zerop limite) (return-from limdepthfirstsearch_aux nil))
+	(loop for x in (funcall (problem-fn-nextstates problem) (node-state state))
 			do((lambda()
-				(setf ret (limdepthfirstsearch_aux x problem (- limite 1)))
+				(setf no (stateToNode state x))
+				(setf ret (limdepthfirstsearch_aux no problem (- limite 1)))
 				(cond ((eq ret nil)())
-					((funcall (problem-fn-isGoal problem) ret) (return-from limdepthfirstsearch_aux   ret))
-					((funcall (problem-fn-isGoal problem) (car last ret)) (return-from limdepthfirstsearch_aux  ret))
+					((funcall (problem-fn-isGoal problem) (node-state ret)) (return-from limdepthfirstsearch_aux   ret))
 				)))	
-	)
+	))
 )
+
+(defun creatList (node)
+	(let ((sol '()) (parentNode (node-parent node))) 
+	(push (node-state node) sol)	
+	(loop
+		(push (node-state parentNode) sol)
+		(if (equal (node-parent parentNode) nil) (return-from creatList sol))
+		(setf parentNode (node-parent parentNode))
+	)
+))
+
+	
+		
+		
+		
+;(defun limdepthfirstsearch_aux (state problem limite)
+;	(if (funcall (problem-fn-isGoal problem) state) (return-from limdepthfirstsearch_aux  state))
+ ;	(if (zerop limite) (return-from limdepthfirstsearch_aux nil))
+ ;	(loop for x in (funcall (problem-fn-nextstates problem) state)
+	;		do((lambda()
+	;			(setf ret (limdepthfirstsearch_aux x problem (- limite 1)))
+	;			(cond ((eq ret nil)())
+	;				((funcall (problem-fn-isGoal problem) ret) (return-from limdepthfirstsearch_aux   ret))
+	;				((funcall (problem-fn-isGoal problem) (car last ret)) (return-from limdepthfirstsearch_aux  ret))
+	;			)))	
+	;)
+;)
 	
 	
 	
@@ -214,5 +246,11 @@
 	;;;push (limdepthfirstsearch_aux x (- lim 1)) ret
 	
 ;iterlimdepthfirstsearch
-(defun iterlimdepthfirstsearch (problem &key (lim most-positive-fixnum))
-	(list (make-node :state (problem-initial-state problem))) )
+(defun iterlimdepthfirstsearch (problem)
+	;;;(list (make-node :state (problem-initial-state problem))) )
+	(let ((limite 0) (ObjectiveNode nil))
+	(loop 
+		(setf ObjectiveNode (limdepthfirstsearch_aux (stateToNode nil (problem-initial-state problem)) problem limite))
+		(if (equal ObjectiveNode nil) (setf limite (+ limite 1)) (return-from iterlimdepthfirstsearch (creatList ObjectiveNode)))
+	))
+)
