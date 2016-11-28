@@ -96,9 +96,10 @@
 
 ;; Heuristic
 (defun compute-heuristic (st)
-	0)
-	  
-  
+  (let ((track (state-track st)))
+    (setf a ( - (car (cdr (car (track-endpositions track)))) (car (cdr (state-pos st))))))
+    (- a 1))
+
 	    
 ;;; A*
 (defun a* (problem)
