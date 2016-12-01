@@ -72,8 +72,10 @@
 
 ;;; Pedir 
 (defun nextStates (st)
-  "generate all possible next states"
-	(list st))
+	(let ((ret '()))
+		(loop for el in (possible-actions)
+			do(push (nextState st el) ret))
+	ret))
 
 ;;; limdepthfirstsearch 
 (defun limdepthfirstsearch (problem lim)
@@ -103,4 +105,51 @@
 	    
 ;;; A*
 (defun a* (problem)
-  (list (make-node :state (problem-initial-state problem))))
+  (creatList (a*_aux (problem-initial-state problem) problem)))
+  
+(defun a*_aux (Istate problem)
+	(let ((nodelist '()) (actualnode (stateToNode nil Istate problem)))
+	(setf nodelist (append nodelist (nodelistconvert (funcall (problem-fn-nextStates problem) Istate) actualnode problem)))
+	(setf actualnode nil)
+	(loop for x from 1 
+		do(loop for x in nodelist
+			do((lambda ()
+				(if (eq actualnode nil ) (setf actualnode x))
+				(if (> (node-F actualnode) (node-F x)) (setf actualnode x))))
+		)
+		(if (funcall (problem-fn-isGoal problem) (node-state actualnode)) (return-from a*_aux actualnode))
+		(if (eq actualnode nil) (return-from a*_aux nil))
+		(setf nodelist (append nodelist (nodelistconvert (funcall (problem-fn-nextStates problem) (node-state actualnode)) actualnode problem)))
+		
+		(setf nodelist (remove actualnode nodelist))
+		(setf actualnode nil)
+
+	))
+)
+
+(defun nodelistconvert (nodelist parent problem)
+	(let ((nl '()))
+	(loop for x in nodelist
+		do(push (stateToNode parent x problem) nl)
+	) nl)
+)
+  
+(defun creatList (node)
+	(let ((sol '()) (parentNode (node-parent node))) 
+	(push (node-state node) sol)	
+	(loop
+		(push (node-state parentNode) sol)
+		(if (equal (node-parent parentNode) nil) (return-from creatList sol))
+		(setf parentNode (node-parent parentNode))
+	)
+)) 
+
+ 
+ (defun stateToNode (parent CurrentState problem)
+	(make-NODE 
+ 		:PARENT parent
+	  	:STATE CurrentState
+	  	:F (if (not(eq parent nil)) (+ (+ (state-cost CurrentState) (node-g parent)) (funcall (problem-fn-h problem)CurrentState)) 
+			(+ (state-cost CurrentState) (funcall (problem-fn-h problem)CurrentState)))
+	  	:G (if (not(eq parent nil)) (+ (state-cost CurrentState) (node-g parent)) (state-cost CurrentState))
+	  	:H (funcall (problem-fn-h problem)CurrentState)))
