@@ -79,20 +79,31 @@
 
 ;;; limdepthfirstsearch 
 (defun limdepthfirstsearch (problem lim)
-  "limited depth first search
-     st - initial state
-     problem - problem information
-     lim - depth limit"
-	(list (make-node :state (problem-initial-state problem))) )
-				      
+    (creatList (limdepthfirstsearch_aux (stateToNode nil (problem-initial-state problem)) problem lim)))
+    
+    
+(defun limdepthfirstsearch_aux (state problem limite )
+  (let ((ret nil)(no nil))
+  (if (funcall (problem-fn-isGoal problem) (node-state state)) (return-from limdepthfirstsearch_aux  state))
+  (if (zerop limite) (return-from limdepthfirstsearch_aux nil))
+  (loop for x in (funcall (problem-fn-nextstates problem) (node-state state))
+      do((lambda()
+        (setf no (stateToNode state x))
+        (setf ret (limdepthfirstsearch_aux no problem (- limite 1)))
+        (cond ((eq ret nil)())
+          ((funcall (problem-fn-isGoal problem) (node-state ret)) (return-from limdepthfirstsearch_aux   ret))
+        ))) 
+  ))
+)
 
 ;iterlimdepthfirstsearch
 (defun iterlimdepthfirstsearch (problem)
-  "limited depth first search
-     st - initial state
-     problem - problem information
-     lim - limit of depth iterations"
-	(list (make-node :state (problem-initial-state problem))) )
+  (let ((limite 0) (ObjectiveNode nil))
+  (loop 
+    (setf ObjectiveNode (limdepthfirstsearch_aux (stateToNode nil (problem-initial-state problem)) problem limite))
+    (if (equal ObjectiveNode nil) (setf limite (+ limite 1)) (return-from iterlimdepthfirstsearch (creatList ObjectiveNode)))
+  ))
+)
 	
 ;; Solution of phase 3
 
@@ -143,7 +154,6 @@
 		(setf parentNode (node-parent parentNode))
 	)
 )) 
-
  
  (defun stateToNode (parent CurrentState problem)
 	(make-NODE 
@@ -153,3 +163,8 @@
 			(+ (state-cost CurrentState) (funcall (problem-fn-h problem)CurrentState)))
 	  	:G (if (not(eq parent nil)) (+ (state-cost CurrentState) (node-g parent)) (state-cost CurrentState))
 	  	:H (funcall (problem-fn-h problem)CurrentState)))
+
+
+
+(defun best-search (problem)
+  (a* problem))
