@@ -1,6 +1,10 @@
-(load "datastructures.lisp")
-(load "auxfuncs.lisp")
+;;; 79664 Joao Pedro Martins Serras, 79714 Daniel Caramujo, Grupo 63
 
+;(load "datastructures.lisp")
+;(load "auxfuncs.lisp")
+
+(load "datastructures.fas")
+(load "auxfuncs.fas")
 
 ;;; TAI position
 (defun make-pos (c l)
@@ -77,9 +81,17 @@
 			do(push (nextState st el) ret))
 	ret))
 
+(defun stateToNode1 (parentState CurrentState)
+	(make-NODE 
+ 		:PARENT parentState
+	  	:STATE CurrentState
+	  	:F nil
+	  	:G nil
+	  	:H nil))
+
 ;;; limdepthfirstsearch 
 (defun limdepthfirstsearch (problem lim)
-    (creatList (limdepthfirstsearch_aux (stateToNode nil (problem-initial-state problem)) problem lim)))
+    (creatList (limdepthfirstsearch_aux (stateToNode1 nil (problem-initial-state problem)) problem lim)))
     
     
 (defun limdepthfirstsearch_aux (state problem limite )
@@ -88,7 +100,7 @@
   (if (zerop limite) (return-from limdepthfirstsearch_aux nil))
   (loop for x in (funcall (problem-fn-nextstates problem) (node-state state))
       do((lambda()
-        (setf no (stateToNode state x))
+        (setf no (stateToNode1 state x))
         (setf ret (limdepthfirstsearch_aux no problem (- limite 1)))
         (cond ((eq ret nil)())
           ((funcall (problem-fn-isGoal problem) (node-state ret)) (return-from limdepthfirstsearch_aux   ret))
@@ -100,7 +112,7 @@
 (defun iterlimdepthfirstsearch (problem)
   (let ((limite 0) (ObjectiveNode nil))
   (loop 
-    (setf ObjectiveNode (limdepthfirstsearch_aux (stateToNode nil (problem-initial-state problem)) problem limite))
+    (setf ObjectiveNode (limdepthfirstsearch_aux (stateToNode1 nil (problem-initial-state problem)) problem limite))
     (if (equal ObjectiveNode nil) (setf limite (+ limite 1)) (return-from iterlimdepthfirstsearch (creatList ObjectiveNode)))
   ))
 )
@@ -109,9 +121,9 @@
 
 ;; Heuristic
 (defun compute-heuristic (st)
-  (let ((track (state-track st)))
-    (setf a ( - (car (cdr (car (track-endpositions track)))) (car (cdr (state-pos st))))))
-    (- a 1))
+  (let ((track (state-track st)) (a 0))
+    (setf a ( - (car (cdr (car (track-endpositions track)))) (car (cdr (state-pos st)))))
+    (- a 1)))
 
 	    
 ;;; A*
