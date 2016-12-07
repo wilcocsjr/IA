@@ -1,10 +1,10 @@
 ;;; 79664 Joao Pedro Martins Serras, 79714 Daniel Caramujo, Grupo 63
 
-;(load "datastructures.lisp")
-;(load "auxfuncs.lisp")
+(load "datastructures.lisp")
+(load "auxfuncs.lisp")
 
-(load "datastructures.fas")
-(load "auxfuncs.fas")
+;(load "datastructures.fas")
+;(load "auxfuncs.fas")
 
 ;;; TAI position
 (defun make-pos (c l)
@@ -123,7 +123,7 @@
 (defun compute-heuristic (st)
   (let ((track (state-track st)) (a 0))
     (setf a ( - (car (cdr (car (track-endpositions track)))) (car (cdr (state-pos st)))))
-    (- a 1)))
+    (if (isObstaclep (state-pos st) track) (setf a most-positive-fixnum) (- a 1))))
 
 	    
 ;;; A*
