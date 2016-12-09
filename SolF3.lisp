@@ -1,10 +1,10 @@
 ;;; 79664 Joao Pedro Martins Serras, 79714 Daniel Caramujo, Grupo 63
 
-(load "datastructures.lisp")
-(load "auxfuncs.lisp")
+;(load "datastructures.lisp")
+;(load "auxfuncs.lisp")
 
-;(load "datastructures.fas")
-;(load "auxfuncs.fas")
+(load "datastructures.fas")
+(load "auxfuncs.fas")
 
 ;;; TAI position
 (defun make-pos (c l)
@@ -124,7 +124,6 @@
   (let ((track (state-track st)) (a 0))
     (setf a ( - (car (cdr (car (track-endpositions track)))) (car (cdr (state-pos st)))))
     (if (isObstaclep (state-pos st) track) (setf a most-positive-fixnum) (- a 1))))
-
 	    
 ;;; A*
 (defun a* (problem)
@@ -179,4 +178,29 @@
 
 
 (defun best-search (problem)
-  (a* problem))
+	(let ((prob (make-problem 
+			:initial-state (problem-initial-state problem)
+			:fn-isGoal #'isGoalp	  
+			:fn-nextstates #'nextStates	  
+			:fn-h #'best-heuristic
+			)))
+  		(a* prob)))
+
+(defun distance-heuristic (st)
+  (let ((track (state-track st)) (a 0) (b 0) (d 0))
+    (setf a (abs( - (car (cdr (car (track-endpositions track)))) (car (cdr (state-pos st))))))
+    (setf b (abs( - (car (car (track-endpositions track))) (car (state-pos st)))))
+    (setf d (sqrt (+ (expt a 2) (expt b 2))))
+        (if (isObstaclep (state-pos st) track) (setf a most-positive-fixnum) (- d 1))))
+
+(defun best-heuristic (st)
+	(print (state-pos st))
+		(+ (* (/ 1 4) (- (distance-heuristic st) (+ (car (state-vel st)) (car(cdr(state-vel st)))))) (* (/ 3 4) (obstacle-heuristic st))))
+
+(defun obstacle-heuristic (st)
+	(cond
+		((and (isObstaclep (state-pos (nextState st '(1 0))) (state-track st)) (> 2 (car (state-vel st)))) 100)
+		((and (isObstaclep (state-pos (nextState st '(-1 0))) (state-track st)) (< -2 (car (state-vel st)))) 100)
+		((and (isObstaclep (state-pos (nextState st '(0 1))) (state-track st)) (> 2 (car (cdr (state-vel st))))) 100)
+		((and (isObstaclep (state-pos (nextState st '(0 -1))) (state-track st)) (< -2 (car (cdr (state-vel st))))) 100)
+		(T 1)))
